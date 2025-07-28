@@ -1,6 +1,6 @@
-from med_classifier.config.configuration import ConfigurationManager
-from med_classifier.components.data_ingest import DataIngestion
-from med_classifier import logger
+from src.med_classifier.config.configuration import ConfigurationManager
+from src.med_classifier.components.data_ingest import DataIngestion
+from src.med_classifier import logger
 
 STAGE_NAME = "Data Ingestion stage"
 

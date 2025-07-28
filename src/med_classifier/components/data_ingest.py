@@ -1,9 +1,9 @@
 import os
 import zipfile
 import gdown
-from med_classifier import logger
-from med_classifier.utils.common import get_size
-from med_classifier.entity.config_entity import (DataIngestionConfig)
+from src.med_classifier import logger
+from src.med_classifier.utils.common import get_size
+from src.med_classifier.entity.config_entity import (DataIngestionConfig)
 
 
 

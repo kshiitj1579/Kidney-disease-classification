@@ -1,27 +1,8 @@
-# Parameters related to training the deep learning model
-training:
-  epochs: 10              # Number of times the model will go through the entire dataset
-  batch_size: 32          # Number of samples processed before the model is updated
-  learning_rate: 0.001    # How big of a step the optimizer takes during training
-  optimizer: "Adam"       # The algorithm used to adjust model weights (e.g., Adam, SGD)
-  loss_function: "binary_crossentropy" # Or "categorical_crossentropy" if >2 classes
-  metrics: ["accuracy", "precision", "recall"] # Metrics to monitor during training
-
-# Parameters related to the deep learning model architecture or input
-model:
-  image_size: [224, 224]  # All images will be resized to this resolution (height, width)
-  input_channels: 3       # Number of color channels (3 for RGB, 1 for grayscale)
-  num_classes: 2          # Number of output classes (e.g., Normal, Tumor)
-  activation_function: "sigmoid" # Output layer activation (e.g., sigmoid for binary, softmax for multi-class)
-  pretrained_model_path: "artifacts/models/base_model.h5" # Path to a pre-trained base model (if using transfer learning)
-
-# Parameters related to data preprocessing and augmentation
-data_preparation:
-  validation_split: 0.2   # Percentage of data to reserve for validation during training
-  augmentation_enabled: True # Whether to apply image augmentation
-  image_augmentation:
-    rotation_range: 20    # Max rotation angle for augmented images
-    width_shift_range: 0.1 # Max horizontal shift for augmented images
-    height_shift_range: 0.1 # Max vertical shift for augmented images
-    horizontal_flip: True # Whether to allow random horizontal flipping
-    zoom_range: 0.1       # Max zoom range for augmented images
+AUGMENTATION: True
+IMAGE_SIZE: [224, 224, 3] # as per VGG 16 model
+BATCH_SIZE: 16
+INCLUDE_TOP: False
+EPOCHS: 50
+CLASSES: 2
+WEIGHTS: imagenet
+LEARNING_RATE: 0.01
