@@ -3,6 +3,7 @@ from src.med_classifier.pipeline.step_1_data_ingest import DataIngestionTraining
 from src.med_classifier.pipeline.stage_02_prepare_base_model import PrepareBaseModelTrainingPipeline
 from src.med_classifier.pipeline.stage_03_model_training import ModelTrainingPipeline
 from src.med_classifier.entity.config_entity import TrainingConfig
+from src.med_classifier.pipeline.stage_04_model_evaluation import EvaluationPipeline
 from pathlib import Path
 import os
 import random
@@ -91,7 +92,7 @@ try:
 
     # Run training manually (bypassing pipeline)
     training = Training(config=new_training_config)
-    training.get_base_model()  # ← THIS IS THE FIX
+    training.get_base_model() 
 
     training.train_valid_generator()
     training.train()
@@ -100,3 +101,15 @@ try:
 except Exception as e:
     logger.exception(e)
     raise e
+
+STAGE_NAME = "Evaluation stage"
+try:
+   logger.info(f"*******************")
+   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+   model_evalution = EvaluationPipeline()
+   model_evalution.main()
+   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+
+except Exception as e:
+        logger.exception(e)
+        raise e

@@ -18,3 +18,5 @@ training:
   root_dir: artifacts/training
   trained_model_path: artifacts/training/model.h5
   training_data: artifacts/data_ingestion/CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone/CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone
+
+mlflow_uri: https://dagshub.com/kshitij.bhatnagar1579/Kidney-disease-classification.mlflow

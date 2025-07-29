@@ -1,8 +1,9 @@
 from med_classifier.constants import *
-from med_classifier.utils.common import read_yaml,create_directories
-from med_classifier.entity.config_entity import (DataIngestionConfig, TrainingConfig,PrepareBaseModelConfig)
+from src.med_classifier.utils.common import read_yaml,create_directories,save_json
+from src.med_classifier.entity.config_entity import (DataIngestionConfig, TrainingConfig,PrepareBaseModelConfig,EvaluationConfig)
 import os
 
+#configuration.py
 class ConfigurationManager:
     def __init__(
         self,
@@ -54,7 +55,7 @@ class ConfigurationManager:
         training = self.config.training
         prepare_base_model = self.config.prepare_base_model
         params = self.params
-        training_data = os.path.join(self.config.data_ingestion.unzip_dir, "kidney-ct-scan-image")
+        training_data = os.path.join(self.config.data_ingestion.unzip_dir, "CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone")
         create_directories([
             Path(training.root_dir)
         ])
@@ -71,4 +72,23 @@ class ConfigurationManager:
         )
 
         return training_config
+    
+    def get_evaluation_config(self) -> EvaluationConfig:
+        # 1) Define sample_data first, outside of the EvaluationConfig(...) call
+        sample_data = os.path.join(
+            self.config.artifacts_root,   # typically "artifacts"
+            "data_ingestion",
+            "sample_data"  
+        )
+
+        # 2) Then pass it in
+        eval_config = EvaluationConfig(
+            path_of_model     = "artifacts/training/model.h5",
+            training_data     = sample_data,                      
+            mlflow_uri        = "https://dagshub.com/kshitij.bhatnagar1579/Kidney-disease-classification.mlflow",
+            all_params        = self.params,
+            params_image_size = self.params.IMAGE_SIZE,
+            params_batch_size = self.params.BATCH_SIZE
+        )
+        return eval_config
     

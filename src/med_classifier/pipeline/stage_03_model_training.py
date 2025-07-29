@@ -15,6 +15,7 @@ class ModelTrainingPipeline:
         pass
 
     def create_sample_dataset(self, source_dir, dest_dir, samples_per_class=100):
+        # wipe and recreate the sample_data folder
         if os.path.exists(dest_dir):
             shutil.rmtree(dest_dir)
         os.makedirs(dest_dir, exist_ok=True)
@@ -33,21 +34,29 @@ class ModelTrainingPipeline:
 
             for img in sample_images:
                 src = os.path.join(class_path, img)
-                if not os.path.isfile(src):
-                    continue
                 dst = os.path.join(dest_class_path, img)
-                shutil.copy(src, dst)
+                shutil.copy2(src, dst)
 
     def main(self):
+        logger.info(f"*******************")
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+
+        # 1) load config & get the 100+100 dataset path
         config = ConfigurationManager()
         training_config = config.get_training_config()
+        original_data_path = str(training_config.training_data)
 
-        # Create sample dataset (X logic here)
-        original_data_path = training_config.training_data
-        sample_data_path = os.path.join("artifacts", "sample_dataset")
-        self.create_sample_dataset(original_data_path, sample_data_path, samples_per_class=100)
+        # 2) build 100‑per‑class sample under sample_data/
+        sample_data_path = os.path.join(
+            "artifacts", "data_ingestion", "kidney-ct-scan-image"
+        )
+        self.create_sample_dataset(
+            source_dir=original_data_path,
+            dest_dir=sample_data_path,
+            samples_per_class=100
+        )
 
-        # Create new TrainingConfig with updated data path
+        # 3) override config to point at sample_data/
         new_training_config = TrainingConfig(
             root_dir=training_config.root_dir,
             trained_model_path=training_config.trained_model_path,
@@ -59,20 +68,14 @@ class ModelTrainingPipeline:
             params_image_size=training_config.params_image_size
         )
 
-        # Train on sampled data
-        training = Training(config=new_training_config)
-        training.get_base_model()
-        training.train_valid_generator()
-        training.train()
+        # 4) train on that sample_data/
+        trainer = Training(config=new_training_config)
+        trainer.get_base_model()
+        trainer.train_valid_generator()
+        trainer.train()
+
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
 
 
 if __name__ == '__main__':
-    try:
-        logger.info(f"*******************")
-        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
-        obj = ModelTrainingPipeline()
-        obj.main()
-        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-    except Exception as e:
-        logger.exception(e)
-        raise e
+    ModelTrainingPipeline().main()
